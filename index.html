@@ -685,6 +685,20 @@
       margin-top: clamp(40px, 5vw, 72px);
     }
 
+    .tool-logos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 18px;
+      align-items: center;
+    }
+
+    .tool-logos img {
+      height: 50px;
+      width: auto;
+      display: block;
+    }
+
     /* =======================================================
        FOOTER (contact section — blue background)
        ======================================================= */
@@ -922,8 +936,8 @@
     </a>
     <nav class="nav-menu" id="menu">
       <a class="nav-link" href="index.html"        data-sec="hero">Home</a>
-      <a class="nav-link" href="works.html"        data-sec="works">Works</a>
       <a class="nav-link" href="index.html#story"  data-sec="story">About</a>
+      <a class="nav-link" href="works.html"        data-sec="works">Works</a>
       <a class="nav-link" href="index.html#footer" data-sec="footer">Contact</a>
     </nav>
     <div class="nav-right">
@@ -1033,13 +1047,11 @@
           <span class="pill">Social Media Creative</span>
           <span class="pill">Short-form Video</span>
           <span class="pill">Motion Graphics</span>
-          <span class="pill">Thumbnails</span>
         </div>
       </div>
       <div class="skill-group" data-reveal data-delay="2">
         <div class="grp-label">Technical</div>
         <div class="pills">
-          <span class="pill">Structured Problem Solving</span>
           <span class="pill">IoT &amp; Automation</span>
           <span class="pill">Lighting Control</span>
           <span class="pill">System Integration</span>
@@ -1047,16 +1059,16 @@
       </div>
     </div>
     <div class="tools-block" data-reveal>
-      <div class="grp-label">Tools</div>
-      <div class="pills">
-        <span class="pill">Figma</span>
-        <span class="pill">Illustrator</span>
-        <span class="pill">Photoshop</span>
-        <span class="pill">InDesign</span>
-        <span class="pill">After Effects</span>
-        <span class="pill">Premiere Pro</span>
-        <span class="pill">Canva</span>
-        <span class="pill">CapCut</span>
+      <div class="grp-label">Editing Tools</div>
+      <div class="tool-logos">
+        <img src="applogo/figma.png"       alt="Figma" />
+        <img src="applogo/illustrator.png" alt="Illustrator" />
+        <img src="applogo/photoshop.png"   alt="Photoshop" />
+        <img src="applogo/indesign.png"    alt="InDesign" />
+        <img src="applogo/aftereffect.png" alt="After Effects" />
+        <img src="applogo/premierpro.png"  alt="Premiere Pro" />
+        <img src="applogo/canva.png"       alt="Canva" />
+        <img src="applogo/capcut.png"      alt="CapCut" />
       </div>
     </div>
   </div>
@@ -1129,18 +1141,25 @@
   var links    = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
 
   function syncNav() {
-    var line    = (nav.offsetHeight || 70) * 0.5;
-    var current = sections[0];
+    var line = (nav.offsetHeight || 70) * 0.5;
+
+    // section behind the navbar → controls background/mode
+    var modeSection = sections[0];
     for (var i = 0; i < sections.length; i++) {
       var r = sections[i].getBoundingClientRect();
-      if (r.top <= line && r.bottom > line) {
-        current = sections[i];
-        break;
-      }
+      if (r.top <= line) { modeSection = sections[i]; }
     }
-    var mode       = current ? current.getAttribute('data-navmode') : 'light';
-    var id         = current ? current.id : 'hero';
-    var secForLink = (id === 'skills') ? 'works' : id;
+
+    // section for active link → switches to footer when at page bottom
+    var activeSection = modeSection;
+    if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 10) {
+      activeSection = sections[sections.length - 1];
+    }
+
+    var mode       = modeSection.getAttribute('data-navmode');
+    var id         = modeSection.id;
+    var activeId   = activeSection.id;
+    var secForLink = (activeId === 'skills') ? 'works' : activeId;
     nav.classList.toggle('on-hero',  id   === 'hero');
     nav.classList.toggle('on-light', mode === 'dark');
     links.forEach(function (l) {

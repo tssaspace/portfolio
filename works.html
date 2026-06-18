@@ -836,8 +836,8 @@
     </a>
     <nav class="nav-menu" id="menu">
       <a class="nav-link" href="index.html"        data-sec="hero">Home</a>
-      <a class="nav-link active" href="works.html" data-sec="works" aria-current="page">Works</a>
       <a class="nav-link" href="index.html#story"  data-sec="story">About</a>
+      <a class="nav-link active" href="works.html" data-sec="works" aria-current="page">Works</a>
       <a class="nav-link" href="index.html#footer" data-sec="footer">Contact</a>
     </nav>
     <div class="nav-right">
@@ -1041,17 +1041,26 @@
   var links    = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
 
   function syncNav() {
-    var line    = (nav.offsetHeight || 70) * 0.5;
-    var current = sections[0];
+    var line = (nav.offsetHeight || 70) * 0.5;
+
+    // section behind the navbar → controls background/mode
+    var modeSection = sections[0];
     for (var i = 0; i < sections.length; i++) {
       var r = sections[i].getBoundingClientRect();
-      if (r.top <= line && r.bottom > line) { current = sections[i]; break; }
+      if (r.top <= line) { modeSection = sections[i]; }
     }
-    var mode = current ? current.getAttribute('data-navmode') : 'dark';
+
+    // section for active link → switches to footer when at page bottom
+    var activeSection = modeSection;
+    if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 10) {
+      activeSection = sections[sections.length - 1];
+    }
+
+    var mode     = modeSection.getAttribute('data-navmode');
+    var activeId = activeSection.id;
     nav.classList.toggle('on-light', mode === 'dark');
-    var id = current ? current.id : 'works';
     links.forEach(function (l) {
-      l.classList.toggle('active', l.getAttribute('data-sec') === id);
+      l.classList.toggle('active', l.getAttribute('data-sec') === activeId);
     });
   }
 
